@@ -26,6 +26,11 @@ class Kategori extends Model
         return $this->hasMany(Subkategori::class, 'id_kategori', 'id_kategori');
     }
 
+    public function subkategori()
+    {
+        return $this->belongsTo(Subkategori::class,'id_subkat', 'id_subkat');
+    }
+
     // Override getTable() method untuk memastikan
     public function getTable()
     {

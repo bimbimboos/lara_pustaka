@@ -9,12 +9,15 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
+    protected $table = 'users';
+    protected $primaryKey = 'id_user';
 
     protected $fillable = [
         'name',
         'email',
         'password',
-        'role', // 🔥 tambah ini
+        'role',
+        'id_user'
     ];
 
     protected $hidden = [
@@ -44,5 +47,10 @@ class User extends Authenticatable
     public function isUser(): bool
     {
         return $this->role === 'user';
+    }
+
+    public function penataan()
+    {
+        return $this->hasMany(PenataanBuku::class, 'id_penataan');
     }
 }

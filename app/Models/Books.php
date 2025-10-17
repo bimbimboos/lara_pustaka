@@ -1,47 +1,50 @@
 <?php
 
-namespace App\Models;
+    namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+    use Illuminate\Database\Eloquent\Model;
 
-class Books extends Model
-{
-    protected $table = 'books';
-    protected $primaryKey = 'id_buku';
-    public $timestamps = false;
-
-    protected $fillable = [
-        'judul',
-        'id_kategori',
-        'id_penerbit',
-        'id_subkat',
-        'pengarang',
-        'tahun_terbit',
-        'isbn',
-        'harga',
-        'barcode',
-    ];
-
-    // Relasi ke kategori
-    public function kategori()
+    class Books extends Model
     {
-        return $this->belongsTo(Kategori::class, 'id_kategori', 'id_kategori');
-    }
+        protected $table = 'books';
+        protected $primaryKey = 'id_buku';
+        public $timestamps = false;
 
-    // Relasi ke penerbit
-    public function penerbit()
-    {
-        return $this->belongsTo(Penerbit::class, 'id_penerbit', 'id_penerbit');
-    }
+        protected $fillable = [
+            'judul',
+            'id_kategori',
+            'id_penerbit',
+            'id_subkat',
+            'pengarang',
+            'tahun_terbit',
+            'isbn',
+            'harga',
+            'barcode',
+            'jumlah',
+        ];
 
-    // Relasi ke subkategori
-    public function subkategori()
-    {
-        return $this->belongsTo(Subkategori::class, 'id_subkat', 'id_subkat');
+        public function kategori()
+        {
+            return $this->belongsTo(Kategori::class, 'id_kategori', 'id_kategori');
+        }
+
+        public function penerbit()
+        {
+            return $this->belongsTo(Penerbit::class, 'id_penerbit', 'id_penerbit');
+        }
+
+        public function subkategori()
+        {
+            return $this->belongsTo(Subkategori::class, 'id_subkat', 'id_subkat');
+        }
+
+        // PERBAIKI RELASI INI
+        public function penataan()  // Ubah dari PenataanBuku() ke penataan()
+        {
+            return $this->hasMany(PenataanBuku::class, 'id_buku', 'id_buku');  // Foreign key: id_buku
+        }
+        public function item()
+        {
+            return $this->hasmany(Items::class, 'id_buku', 'id_buku');
+        }
     }
-    // Relasi ke book items
-    public function items()
-    {
-        return $this->hasMany(BookItems::class, 'id_buku', 'id_buku');
-    }
-}

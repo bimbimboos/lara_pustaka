@@ -23,13 +23,9 @@
             <table class="table table-bordered table-striped table-hover align-middle">
                 <thead>
                 <tr class="table-secondary text-center">
-                    <th style="width: 8%">ID Rak</th>
-                    <th style="width: 12%">Nama</th>
-                    <th style="width: 15%">Barcode</th>
-                    <th style="width: 12%">Kolom x Baris</th>
-                    <th style="width: 10%">Kapasitas</th>
-                    <th style="width: 15%">Lokasi</th>
-                    <th style="width: 28%">Aksi</th>
+                    <th style="width: 20%">ID Rak</th>
+                    <th style="width: 30%">Nama</th>
+                    <th style="width: 20%">Aksi</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -37,10 +33,6 @@
                     <tr id="row-{{ $rak->id_rak }}" class="text-center">
                         <td>{{ $rak->id_rak }}</td>
                         <td>{{ $rak->nama }}</td>
-                        <td>{{ $rak->barcode }}</td>
-                        <td>{{ $rak->kolom }} x {{ $rak->baris }}</td>
-                        <td>{{ $rak->kapasitas }}</td>
-                        <td>{{ $rak->Lokasi->ruang ?? 'N/A' }}</td>
                         <td>
                             <!-- Tombol Detail -->
                             <a href="{{ route('raks.show', $rak->id_rak) }}" class="btn btn-info btn-sm">
@@ -64,7 +56,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center">
+                        <td colspan="3" class="text-center">
                             @if(request('search'))
                                 Tidak ada rak yang ditemukan dengan kata kunci "{{ request('search') }}"
                             @else
@@ -77,7 +69,7 @@
             </table>
         </div>
 
-        {{-- Pagination --}}
+        <!-- Pagination -->
         <div class="d-flex justify-content-center mt-3">
             {{ $raks->appends(['search' => request('search')])->links('pagination::simple-bootstrap-5') }}
         </div>
@@ -85,55 +77,6 @@
 
     <!-- Modals Section -->
     @foreach($raks as $rak)
-        <!-- Modal Detail -->
-        <div class="modal fade" id="detailModal{{ $rak->id_rak }}" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content rounded-3 shadow-lg">
-                    <div class="modal-header bg-info text-white">
-                        <h5 class="modal-title"><i class="fas fa-info-circle"></i> Detail Rak</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <table class="table">
-                            <tr>
-                                <th width="35%">ID Rak</th>
-                                <td>{{ $rak->id_rak }}</td>
-                            </tr>
-                            <tr>
-                                <th>Nama</th>
-                                <td>{{ $rak->nama }}</td>
-                            </tr>
-                            <tr>
-                                <th>Barcode</th>
-                                <td>{{ $rak->barcode }}</td>
-                            </tr>
-                            <tr>
-                                <th>Kolom</th>
-                                <td>{{ $rak->kolom }}</td>
-                            </tr>
-                            <tr>
-                                <th>Baris</th>
-                                <td>{{ $rak->baris }}</td>
-                            </tr>
-                            <tr>
-                                <th>Kapasitas</th>
-                                <td>{{ $rak->kapasitas }}</td>
-                            </tr>
-                            <tr>
-                                <th>Lokasi</th>
-                                <td>{{ $rak->Lokasi->ruang ?? 'N/A' }}</td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            <i class="fas fa-times"></i> Tutup
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Modal Edit -->
         <div class="modal fade" id="editModal{{ $rak->id_rak }}" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -213,7 +156,6 @@
 @push('scripts')
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Handle delete dengan AJAX
             document.querySelectorAll(".delete-form").forEach(form => {
                 form.addEventListener("submit", function (e) {
                     e.preventDefault();
@@ -226,15 +168,10 @@
                         headers: { "X-Requested-With": "XMLHttpRequest" }
                     }).then(res => {
                         if (res.ok) {
-                            // Tutup modal
                             let modalEl = document.getElementById(`hapusModal${id}`);
                             let modal = bootstrap.Modal.getInstance(modalEl);
                             modal.hide();
-
-                            // Hapus row dari tabel
                             if (row) row.remove();
-
-                            // Notifikasi
                             alert("Rak berhasil dihapus!");
                         }
                     });

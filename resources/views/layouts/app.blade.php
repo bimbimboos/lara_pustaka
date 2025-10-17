@@ -48,6 +48,31 @@
             max-width: 50%;
         }
 
+        /* Realtime Clock Styling */
+        .realtime-clock {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: white;
+            pointer-events: none;
+        }
+
+        .clock-time {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 2px;
+        }
+
+        .clock-date {
+            font-size: 12px;
+            font-weight: 400;
+            opacity: 0.9;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
         .profile-section {
             display: flex;
             align-items: center;
@@ -182,7 +207,9 @@
         .content {
             margin-left: 250px;
             padding: 20px;
+            padding-bottom: 80px;
             transition: all 0.3s ease;
+            min-height: calc(100vh - 70px);
         }
 
         .content.full {
@@ -196,12 +223,34 @@
             width: 100%;
             text-align: left;
         }
+        .main-footer {
+            position: fixed;
+            bottom: 0;
+            left: 250px;
+            right: 0;
+            background-color: #ffffff;
+            color: black;
+            padding: 15px 20px;
+            border-top: 2px solid #ffffff;
+            transition: all 0.3s ease;
+            z-index: 100;
+            text-align: center;
+        }
+
+        .content.full ~ .main-footer {
+            left: 60px;
+        }
 
         /* Responsive */
         @media (max-width: 768px) {
             .library-title {
                 font-size: 16px;
                 max-width: 40%;
+            }
+
+            /* Hide clock on mobile */
+            .realtime-clock {
+                display: none;
             }
 
             .profile-section {
@@ -245,6 +294,12 @@
             .content {
                 margin-left: 60px;
             }
+
+            .main-footer {
+                left: 60px;
+                font-size: 12px;
+                padding: 12px 10px;
+            }
         }
 
         /* Scrollbar Sidebar */
@@ -276,6 +331,13 @@
             <i class="fas fa-book-reader me-2"></i>
             Bimantara Pustaka
         </h1>
+
+        {{-- Realtime Clock - BAGIAN BARU --}}
+        <div class="realtime-clock">
+            <div class="clock-time" id="clock-time">00:00:00</div>
+            <div class="clock-date" id="clock-date">Loading...</div>
+        </div>
+
         <a href="{{ route('profile.show') }}" class="profile-section">
             @if(Auth::user()->photo)
                 <img src="{{ asset('storage/' . Auth::user()->photo) }}" alt="Profile" class="profile-photo">
@@ -336,9 +398,9 @@
         <i class="fas fa-cog"></i>
         <span class="text">Pengaturan</span>
     </a>
-    <a href="{{ route('books.create') }}">
-        <i class="fas fa-plus-circle"></i>
-        <span class="text">Tambah Buku</span>
+    <a href="{{ route('penataan.index') }}">
+        <i class="fas fa-clipboard"></i>
+        <span class="text">Data Penataan</span>
     </a>
 
     @auth
@@ -359,8 +421,14 @@
     </main>
 </div>
 
+<!-- Footer - Tetap di posisi yang sama -->
+<footer class="main-footer">
+    <strong>&copy;2025 Bimantara Pustaka</strong> - All Right Reserved.
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // Sidebar Toggle
     const sidebar = document.getElementById('sidebar');
     const content = document.getElementById('content');
     const toggleBtn = document.getElementById('toggleSidebar');
@@ -404,8 +472,40 @@
             menuTitles.forEach(title => title.classList.add('hide'));
         }
     });
-</script>
 
+    // ============================================
+    // REALTIME CLOCK - SCRIPT BARU
+    // ============================================
+    function updateClock() {
+        const now = new Date();
+
+        // Format waktu: HH:MM:SS
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        const time = `${hours}:${minutes}:${seconds}`;
+
+        // Format tanggal: Hari, DD Month YYYY (dalam Bahasa Indonesia)
+        const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+        const dayName = days[now.getDay()];
+        const day = now.getDate();
+        const month = months[now.getMonth()];
+        const year = now.getFullYear();
+
+        const date = `${dayName}, ${day} ${month} ${year}`;
+
+        // Update DOM
+        document.getElementById('clock-time').textContent = time;
+        document.getElementById('clock-date').textContent = date;
+    }
+
+    // Update clock setiap detik
+    updateClock(); // Jalankan pertama kali
+    setInterval(updateClock, 1000); // Update setiap 1 detik
+</script>
 @stack('scripts')
 </body>
 </html>

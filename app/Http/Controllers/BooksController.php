@@ -152,10 +152,9 @@ class BooksController extends Controller
     // 🔹 FIXED: Method show untuk redirect ke list item buku
     public function show($id)
     {
-        $book = Books::with('items')->findOrFail($id);
-        $bookItems = $book->items; // ambil semua item buku
+        $book = Books::with(['kategori', 'penerbit', 'subkategori'])->findOrFail($id);
 
-        // Arahkan ke halaman index bookitems (list item), bukan show
-        return view('bookitems.index', compact('book', 'bookItems'));
+        return view('books.show', compact('book'));
     }
+
 }
